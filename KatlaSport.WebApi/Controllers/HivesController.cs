@@ -64,9 +64,9 @@ namespace KatlaSport.WebApi.Controllers
         [SwaggerResponse(HttpStatusCode.NoContent, Description = "Sets deleted status for an existed hive.")]
         [SwaggerResponse(HttpStatusCode.NotFound)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public IHttpActionResult SetStatus([FromUri] int hiveId, [FromUri] bool deletedStatus)
+        public async Task<IHttpActionResult> SetStatus([FromUri] int hiveId, [FromUri] bool deletedStatus)
         {
-            _hiveService.SetStatusAsync(hiveId, deletedStatus);
+            await _hiveService.SetStatusAsync(hiveId, deletedStatus);
             return ResponseMessage(Request.CreateResponse(HttpStatusCode.NoContent));
         }
     }
