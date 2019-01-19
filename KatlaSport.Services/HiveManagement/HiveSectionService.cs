@@ -60,20 +60,29 @@ namespace KatlaSport.Services.HiveManagement
         public async Task<HiveSection> CreateHiveSectionAsync(UpdateHiveSectionRequest createRequest)
         {
             var dbHiveSections = await _context.Sections.Where(h => h.Code == createRequest.Code).ToArrayAsync();
+            var dbHives = await _context.Hives.Where(h => h.Id == createRequest.StoreHiveId).ToArrayAsync();
             if (dbHiveSections.Length > 0)
             {
                 throw new RequestedResourceHasConflictException("code");
+            }
+
+            if (dbHives == null)
+            {
+                throw new RequestedResourceHasConflictException("hive Id");
             }
 
             var dbHiveSection = Mapper.Map<UpdateHiveSectionRequest, DbHiveSection>(createRequest);
 
             dbHiveSection.CreatedBy = _userContext.UserId;
             dbHiveSection.LastUpdatedBy = _userContext.UserId;
+
             _context.Sections.Add(dbHiveSection);
 
             await _context.SaveChangesAsync();
 
-            return Mapper.Map<HiveSection>(dbHiveSection);
+            var result = Mapper.Map<HiveSection>(dbHiveSection);
+
+            return result;
         }
 
         /// <inheritdoc/>
